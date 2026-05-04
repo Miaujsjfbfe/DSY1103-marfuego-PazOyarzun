@@ -1,4 +1,9 @@
 package com.ApiMarfuego.ms_locales.Repository;
 
-public class LocalRepository {
+import com.ApiMarfuego.ms_locales.Model.Local;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LocalRepository extends JpaRepository<Local, Long> {
+
+
 }

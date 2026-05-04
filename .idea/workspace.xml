@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="86d68a95-e88d-42ea-a1e1-5ee674e01bc5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/EstadoMesa.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Sector.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Categoria.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Plato.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Local.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Local.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Mesa.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Mesa.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/LocalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/LocalRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/MesaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/MesaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/LocalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/LocalService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/MesaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/MesaService.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="3DGj2rH9ElFxH3HQ8u2BST5SCxL" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="86d68a95-e88d-42ea-a1e1-5ee674e01bc5" name="Changes" comment="" />
+      <created>1777915100326</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777915100326</updated>
+    </task>
+    <servers />
+  </component>
+</project>
