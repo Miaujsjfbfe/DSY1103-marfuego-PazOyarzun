@@ -4,22 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="86d68a95-e88d-42ea-a1e1-5ee674e01bc5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/EstadoMesa.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Sector.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Categoria.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Plato.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    <list default="true" id="cc2ea69e-6e86-4d2f-89eb-f1ae69b86801" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Controller/PlatoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Repository/CategoriaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Repository/PlatoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Service/PlatoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Controller/DetallePedidoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Controller/PedidoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Model/DetallePedido.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Model/EstadoPedido.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Model/Pedido.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Repository/DetallePedidoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Repository/PedidoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Service/DetallePedidoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/com/example/ms_pedidos/Service/PedidoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Controller/LocalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Controller/LocalController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Local.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Local.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Mesa.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Model/Mesa.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/LocalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/LocalRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/MesaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Repository/MesaRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/LocalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/LocalService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/MesaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-locales/src/main/java/com/ApiMarfuego/ms_locales/Service/MesaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Categoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Categoria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Plato.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-menu/src/main/java/com/example/ms_menu/Model/Plato.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-menu/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms-menu/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +39,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="package-info" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -43,11 +55,11 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 5
-}]]></component>
-  <component name="ProjectId" id="3DGj2rH9ElFxH3HQ8u2BST5SCxL" />
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3DWNVohnKB2I2ZdLLbZmvf4eOCE" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
@@ -55,15 +67,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -73,11 +85,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="86d68a95-e88d-42ea-a1e1-5ee674e01bc5" name="Changes" comment="" />
-      <created>1777915100326</created>
+      <changelist id="cc2ea69e-6e86-4d2f-89eb-f1ae69b86801" name="Changes" comment="" />
+      <created>1778393897074</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1777915100326</updated>
+      <updated>1778393897074</updated>
     </task>
     <servers />
   </component>

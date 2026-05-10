@@ -47,11 +47,8 @@ public class LocalService {
 
     //ELIMINAR
     public void eliminar(Long id){
-        if(!localRepository.existsById(id)){
-            throw new RuntimeException("El local no existe");
-        }
-
         localRepository.deleteById(id);
+
     }
 
     //LISTAR MESAS POR LOCAL
