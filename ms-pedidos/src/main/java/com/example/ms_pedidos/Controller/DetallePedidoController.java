@@ -104,4 +104,26 @@ public class DetallePedidoController {
                     .body(e.getMessage());
         }
     }
+
+
+    //AGREGAR PLATOS AL PEDIDO
+    @PostMapping("/agregar")
+    public ResponseEntity<?> agregarPlatoPedido(@RequestBody DetallePedido detallePedido){
+        try{
+            DetallePedido detallePedido1 = detallePedidoService.agregarPlatoPedido(
+                    detallePedido.getPedido().getId(),
+                    detallePedido.getPlatoId(),
+                    detallePedido.getCantidad());
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(detallePedido1);
+
+        }catch (RuntimeException e){
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+
 }
