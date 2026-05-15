@@ -18,26 +18,26 @@ public class MesaService {
 
 
 
-    //Mostrar lista
+    //MOSTRAR LISTA
     public List<Mesa> listar() {
         return mesaRepository.findAll();
 
     }
 
-    //buscar por id
+    //BUSCAR POR ID
     public Mesa buscarPorId(Long id) {
         return mesaRepository.findById(id)
                 .orElse(null);
 
     }
 
-    //Guardar Mesa
+    //GUARDAR MESA
     public Mesa guardar(Mesa mesa) {
         return mesaRepository.save(mesa);
 
     }
 
-    //Actualizar
+    //ACTUALIZAR
     public Mesa actualizar(Long id, Mesa mesaActualizada){
         Mesa mesa = buscarPorId(id);
 
@@ -45,6 +45,7 @@ public class MesaService {
         mesa.setCapacidad(mesaActualizada.getCapacidad());
         mesa.setEstado(mesaActualizada.getEstado());
         mesa.setSector(mesaActualizada.getSector());
+        mesa.setLocalId(mesaActualizada.getLocalId());
 
         return mesaRepository.save(mesa);
     }
@@ -84,7 +85,7 @@ public class MesaService {
         return mesaRepository.save(mesa);
     }
 
-    //Preguntar estado de mesa
+    //PREGUNTAR ESTADO MESA
     public boolean estaDisponible(Long id){
         Mesa mesa = buscarPorId(id);
 
@@ -93,5 +94,10 @@ public class MesaService {
         }
 
         return mesa.getEstado() == EstadoMesa.LIBRE;
+    }
+
+    //BUSCAR MESAS POR LOCAL
+    public List<Mesa> buscarPorLocal(Long idLocal){
+        return mesaRepository.findByLocalId(idLocal);
     }
 }

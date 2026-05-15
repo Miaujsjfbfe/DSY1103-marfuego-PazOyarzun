@@ -16,8 +16,14 @@ public class Mesa {
 
     private Integer numero;
     private Integer capacidad;
+
+    @Enumerated(EnumType.STRING)
     private EstadoMesa estado;
+
+    @Enumerated(EnumType.STRING)
     private Sector sector;
+
+    private Long localId;
 
 
 }

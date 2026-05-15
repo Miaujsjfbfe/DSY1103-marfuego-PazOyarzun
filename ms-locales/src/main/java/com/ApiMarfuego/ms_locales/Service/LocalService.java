@@ -12,11 +12,9 @@ import java.util.List;
 public class LocalService {
 
     private final LocalRepository localRepository;
-    private final MesaRepository mesaRepository;
 
-    public LocalService(LocalRepository localRepository, MesaRepository mesaRepository) {
+    public LocalService(LocalRepository localRepository) {
         this.localRepository = localRepository;
-        this.mesaRepository = mesaRepository;
     }
 
     //LISTAR
@@ -51,14 +49,5 @@ public class LocalService {
 
     }
 
-    //LISTAR MESAS POR LOCAL
-    public List<Mesa> listarMesaLocal(Long id){
-
-        if (!localRepository.existsById(id)) {
-            throw new RuntimeException("El local no existe");
-        }
-
-        return mesaRepository.findByLocalId(id);
-    }
 
 }

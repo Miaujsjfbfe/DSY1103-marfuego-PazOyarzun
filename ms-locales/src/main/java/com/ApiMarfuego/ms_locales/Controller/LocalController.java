@@ -1,9 +1,7 @@
 package com.ApiMarfuego.ms_locales.Controller;
 
 import com.ApiMarfuego.ms_locales.Model.Local;
-import com.ApiMarfuego.ms_locales.Model.Mesa;
 import com.ApiMarfuego.ms_locales.Service.LocalService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -93,17 +91,4 @@ public class LocalController {
         return ResponseEntity.noContent().build();
     }
 
-    // LISTAR MESAS POR LOCAL
-    @GetMapping("/{id}/mesas")
-    public ResponseEntity<?> listarMesasPorLocal(@PathVariable Long id){
-
-        if(localService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El local no existe.");
-        }
-
-        List<Mesa> mesas = localService.listarMesaLocal(id);
-
-        return ResponseEntity.ok(mesas);
-    }
 }
