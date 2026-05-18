@@ -2,7 +2,7 @@ package com.example.ms_reservas.DTO;
 
 import lombok.*;
 
-@NoArgsConstructor
+@Data
 public class MesaDTO {
 
     private Long id;

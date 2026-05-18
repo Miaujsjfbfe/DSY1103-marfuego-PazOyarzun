@@ -7,7 +7,8 @@ import com.example.ms_pedidos.Repository.DetallePedidoRepository;
 import com.example.ms_pedidos.Repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Service
@@ -24,6 +25,8 @@ public class DetallePedidoService {
         this.pedidoService = pedidoService;
         this.pedidoRepository = pedidoRepository;
     }
+
+    private static final Logger log = LoggerFactory.getLogger(DetallePedidoService.class);
 
     //WEBCLIENT PARA CONECTAR CON MS-MENU
     private final WebClient webClient =
@@ -47,10 +50,14 @@ public class DetallePedidoService {
                                             Long platoId,
                                             Integer cantidad){
 
+
+        log.info("Agregando plato {} al pedido {}", platoId, pedidoId);
+
         // BUSCAR PEDIDO
         Pedido pedido = pedidoService.buscarPorId(pedidoId);
 
         if(pedido == null){
+            log.error("El pedido {} no existe.", pedidoId);
             throw new RuntimeException("El pedido no existe.");
         }
 
@@ -63,16 +70,19 @@ public class DetallePedidoService {
 
         // VALIDAR SI EXISTE
         if(plato == null){
+            log.error("El plato {} no existe.", platoId);
             throw new RuntimeException("El plato no existe.");
         }
 
         // VALIDAR QUE EL PLATO PERTENEZCA AL LOCAL
         if(!plato.getLocalId().equals(pedido.getLocalId())){
+            log.error("El plato {} no pertenece al local del pedido {}", platoId, pedidoId);
             throw new RuntimeException("El plato no existe en el local del pedido.");
         }
 
         // VALIDAR DISPONIBILIDAD
         if(!plato.getDisponible()){
+            log.error("El plato {} no está disponible.", plato.getNombre());
             throw new RuntimeException("El plato está agotado.");
         }
 
@@ -94,7 +104,11 @@ public class DetallePedidoService {
 
         pedido.setTotal(totalActual + subtotal);
 
+        log.info("Total del pedido {} actualizado a {}", pedido.getId(), pedido.getTotal());
+
         pedidoRepository.save(pedido);
+
+        log.info("Detalle agregado correctamente al pedido {}", pedidoId);
 
         // GUARDAR DETALLE
         return detallePedidoRepository.save(detalle);
@@ -107,6 +121,9 @@ public class DetallePedidoService {
         DetallePedido detalle = buscarPorId(id);
 
         if(detalle == null){
+
+            log.error("El detalle {} no existe.", id);
+
             throw new RuntimeException("El detalle no existe.");
         }
 
@@ -115,6 +132,8 @@ public class DetallePedidoService {
         pedido.setTotal(pedido.getTotal() - detalle.getSubtotal());
 
         pedidoRepository.save(pedido);
+
+        log.info("Eliminando detalle {} del pedido {}", detalle.getId(), detalle.getPedido().getId());
 
         detallePedidoRepository.deleteById(id);
 

@@ -7,6 +7,9 @@ import com.example.ms_pedidos.Repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,6 +21,8 @@ public class PedidoService {
     public PedidoService(PedidoRepository pedidoRepository) {
         this.pedidoRepository = pedidoRepository;
     }
+
+    private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
 
 
     //Web client para LOCALES
@@ -35,6 +40,9 @@ public class PedidoService {
                         .block();
 
         if(local == null){
+
+            log.error("El local {} no existe.", localId);
+
             throw new RuntimeException(
                     "El local no existe.");
         }
@@ -58,6 +66,8 @@ public class PedidoService {
     //CREAR PEDIDO
     public Pedido crearPedido(Pedido pedido){
 
+        log.info("Creando pedido para cliente: {}", pedido.getNombreCliente());
+
         //Validar que el local exista
         validarLocal(pedido.getLocalId());
 
@@ -70,7 +80,11 @@ public class PedidoService {
         //Pongo la fecha del sistema
         pedido.setFechaPedido(LocalDateTime.now());
 
-        return pedidoRepository.save(pedido);
+        Pedido pedidoGuardado = pedidoRepository.save(pedido);
+
+        log.info("Pedido creado correctamente con ID: {}", pedidoGuardado.getId());
+
+        return pedidoGuardado;
     }
 
 
@@ -80,6 +94,7 @@ public class PedidoService {
         Pedido pedido = buscarPorId(id);
 
         if (pedido == null){
+            log.error("El pedido {} no existe.", id);
             throw new RuntimeException("El pedido no existe.");
         }
 
@@ -87,6 +102,8 @@ public class PedidoService {
         validarLocal(pedidoActualizado.getLocalId());
 
         pedido.setNombreCliente(pedidoActualizado.getNombreCliente());
+
+        log.info("Pedido {} actualizado correctamente.", pedido.getId());
 
         return pedidoRepository.save(pedido);
     }
@@ -101,6 +118,8 @@ public class PedidoService {
             throw new RuntimeException("El pedido no existe.");
         }
 
+        log.info("Eliminando pedido {}", id);
+
         pedidoRepository.deleteById(id);
 
     }
@@ -113,6 +132,7 @@ public class PedidoService {
         if (pedido == null){
             throw new RuntimeException("El pedido no existe.");
         }
+        log.info("Cambiando estado del pedido {} a {}", id, estado);
 
         pedido.setEstado(estado);
         return pedidoRepository.save(pedido);
