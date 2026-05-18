@@ -12,7 +12,7 @@ Para solucionar esto, se desarrolló un sistema basado en microservicios con Spr
 
 | Nombre | GitHub        |
 |--------|---------------|
-| Paz | @Miaujsjfbfe  |
+| Paz Oyarzún | @Miaujsjfbfe  |
 
 ---
 
@@ -21,7 +21,7 @@ Para solucionar esto, se desarrolló un sistema basado en microservicios con Spr
 | # | Microservicio | Puerto | Descripción                               |
 |---|---------------|--------|-------------------------------------------|
 | 1 | ms-locales | 8081 | Gestión de locales y mesas disponibles, permitiendo verificar mesas libres u ocupadas para reservas |
-| 2 | ms-menu | 8082 | Administración de categorías y platos, incluyendo precios, disponibilidad y locales asociados |
+| 2 | ms-menu | 8082 | Administración de platos, incluyendo precios, disponibilidad y locales asociados |
 | 3 | ms-pedidos | 8083 | Gestión de pedidos y detalle de pedidos, validando disponibilidad de platos mediante comunicación con ms-menu |
 | 4 | ms-reservas | 8084 | Gestión de reservas de mesas, consultando disponibilidad en ms-locales antes de confirmar |
 ---
