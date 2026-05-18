@@ -9,6 +9,8 @@ public interface MesaRepository extends JpaRepository<Mesa, Long > {
 
     List<Mesa> findByLocalId(Long localId);
 
+    boolean existsByNumeroAndLocalId(Integer numero, Long localId);
+
 
 
 

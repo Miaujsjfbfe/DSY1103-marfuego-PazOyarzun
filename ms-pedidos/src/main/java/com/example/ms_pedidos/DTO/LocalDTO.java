@@ -3,12 +3,10 @@ package com.example.ms_pedidos.DTO;
 import lombok.Data;
 
 @Data
-public class PlatoDTO {
+public class LocalDTO {
 
     private Long id;
     private String nombre;
-    private Double precio;
-    private Boolean disponible;
-    private Long localId;
+    private String ciudad;
 
 }

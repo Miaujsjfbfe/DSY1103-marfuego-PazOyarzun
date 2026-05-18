@@ -4,6 +4,7 @@ import com.example.ms_pedidos.DTO.PlatoDTO;
 import com.example.ms_pedidos.Model.DetallePedido;
 import com.example.ms_pedidos.Model.Pedido;
 import com.example.ms_pedidos.Repository.DetallePedidoRepository;
+import com.example.ms_pedidos.Repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -14,16 +15,26 @@ public class DetallePedidoService {
 
     private final DetallePedidoRepository detallePedidoRepository;
     private final PedidoService pedidoService;
+    private final PedidoRepository pedidoRepository;
 
-    public DetallePedidoService(DetallePedidoRepository detallePedidoRepository, PedidoService pedidoService) {
+    public DetallePedidoService(DetallePedidoRepository detallePedidoRepository,
+                                PedidoService pedidoService,
+                                PedidoRepository pedidoRepository) {
         this.detallePedidoRepository = detallePedidoRepository;
         this.pedidoService = pedidoService;
+        this.pedidoRepository = pedidoRepository;
     }
+
+    //WEBCLIENT PARA CONECTAR CON MS-MENU
+    private final WebClient webClient =
+            WebClient.create("http://localhost:8082");
+
 
     // LISTAR TODOS LOS DETALLES
     public List<DetallePedido> listarDetalles(){
         return detallePedidoRepository.findAll();
     }
+
 
     // BUSCAR DETALLE POR ID
     public DetallePedido buscarPorId(Long id){
@@ -31,72 +42,16 @@ public class DetallePedidoService {
                 .orElse(null);
     }
 
-    // CREAR DETALLE
-    public DetallePedido crearDetalle(DetallePedido detallePedido){
-
-        // Calcular subtotal automáticamente
-        detallePedido.setSubtotal(
-                detallePedido.getPrecio() * detallePedido.getCantidad()
-        );
-
-        return detallePedidoRepository.save(detallePedido);
-    }
-
-    // ACTUALIZAR DETALLE
-    public DetallePedido actualizar(Long id, DetallePedido detalleActualizado){
-
-        DetallePedido detalle = buscarPorId(id);
-
-        detalle.setPlatoId(detalleActualizado.getPlatoId());
-        detalle.setNombrePlato(detalleActualizado.getNombrePlato());
-        detalle.setPrecio(detalleActualizado.getPrecio());
-        detalle.setCantidad(detalleActualizado.getCantidad());
-
-        // recalcular subtotal
-        detalle.setSubtotal(
-                detalle.getPrecio() * detalle.getCantidad()
-        );
-
-        detalle.setPedido(detalleActualizado.getPedido());
-
-        return detallePedidoRepository.save(detalle);
-    }
-
-    // ELIMINAR DETALLE
-    public void eliminar(Long id){
-        detallePedidoRepository.deleteById(id);
-
-    }
-
-    // LISTAR DETALLES POR PEDIDO
-    public List<DetallePedido> listarPorPedido(Long pedidoId){
-
-        Pedido pedido = pedidoService.buscarPorId(pedidoId);
-
-        if(pedido == null){
-            throw new RuntimeException("El pedido no existe");
-
-        }
-
-        return detallePedidoRepository.findByPedidoId(pedidoId);
-    }
-
-
-    //AGREGAR PLATO A DETALLEPEDIDO
-
-    //WEBCLIENT PARA CONECTAR CON MS-MENU
-    private final WebClient webClient =
-            WebClient.create("http://localhost:8082");
-
-
-    //AGREGAR PLATO AL PEDIDO
-    public DetallePedido agregarPlatoPedido(Long pedidoId, Long platoId, Integer cantidad){
+    //AGREGAR PLATO AL PEDIDO - Aqui se CREA el detalle
+    public DetallePedido agregarPlatoPedido(Long pedidoId,
+                                            Long platoId,
+                                            Integer cantidad){
 
         // BUSCAR PEDIDO
         Pedido pedido = pedidoService.buscarPorId(pedidoId);
 
         if(pedido == null){
-            throw new RuntimeException("El pedido no existe");
+            throw new RuntimeException("El pedido no existe.");
         }
 
         // CONSULTAR PLATO EN MS-MENU
@@ -108,12 +63,17 @@ public class DetallePedidoService {
 
         // VALIDAR SI EXISTE
         if(plato == null){
-            throw new RuntimeException("El plato no existe");
+            throw new RuntimeException("El plato no existe.");
+        }
+
+        // VALIDAR QUE EL PLATO PERTENEZCA AL LOCAL
+        if(!plato.getLocalId().equals(pedido.getLocalId())){
+            throw new RuntimeException("El plato no existe en el local del pedido.");
         }
 
         // VALIDAR DISPONIBILIDAD
         if(!plato.getDisponible()){
-            throw new RuntimeException("El plato está agotado");
+            throw new RuntimeException("El plato está agotado.");
         }
 
         // CREAR DETALLE
@@ -132,16 +92,45 @@ public class DetallePedidoService {
         // ACTUALIZAR TOTAL DEL PEDIDO
         Double totalActual = pedido.getTotal();
 
-        if(totalActual == null){
-            totalActual = 0.0;
-        }
-
         pedido.setTotal(totalActual + subtotal);
 
-        pedidoService.crearPedido(pedido);
+        pedidoRepository.save(pedido);
 
         // GUARDAR DETALLE
         return detallePedidoRepository.save(detalle);
+    }
+
+
+    // ELIMINAR DETALLE
+    public void eliminar(Long id){
+
+        DetallePedido detalle = buscarPorId(id);
+
+        if(detalle == null){
+            throw new RuntimeException("El detalle no existe.");
+        }
+
+        //Elimino el precio del detalle al total del pedido
+        Pedido pedido = detalle.getPedido();
+        pedido.setTotal(pedido.getTotal() - detalle.getSubtotal());
+
+        pedidoRepository.save(pedido);
+
+        detallePedidoRepository.deleteById(id);
+
+    }
+
+    // LISTAR DETALLES POR PEDIDO
+    public List<DetallePedido> listarPorPedido(Long pedidoId){
+
+        Pedido pedido = pedidoService.buscarPorId(pedidoId);
+
+        if(pedido == null){
+            throw new RuntimeException("El pedido no existe");
+
+        }
+
+        return detallePedidoRepository.findByPedidoId(pedidoId);
     }
 
 }

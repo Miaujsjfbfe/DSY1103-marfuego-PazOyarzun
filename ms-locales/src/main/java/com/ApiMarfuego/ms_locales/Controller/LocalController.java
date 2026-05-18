@@ -1,7 +1,9 @@
 package com.ApiMarfuego.ms_locales.Controller;
 
+import com.ApiMarfuego.ms_locales.DTO.LocalRequestDTO;
 import com.ApiMarfuego.ms_locales.Model.Local;
 import com.ApiMarfuego.ms_locales.Service.LocalService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,58 +35,43 @@ public class LocalController {
 
         Local local = localService.buscarPorId(id);
 
-        if(local == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El local no existe.");
-        }
-
         return ResponseEntity.ok(local);
     }
 
+
     //CREAR LOCAL
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Local local){
-        try{
-            Local nuevoLocal = localService.crear(local);
+    public ResponseEntity<?> crear(@Valid @RequestBody LocalRequestDTO dto){
+        Local local = new Local();
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoLocal);
+        local.setNombre(dto.getNombre());
+        local.setCiudad(dto.getCiudad());
 
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        Local nuevo = localService.crear(local);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(nuevo);
     }
+
 
     // ACTUALIZAR LOCAL
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Local local){
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody LocalRequestDTO dto){
 
-        if(localService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El local no existe.");
-        }
+        Local local = new Local();
 
-        try{
-            Local localActualizado = localService.actualizar(id, local);
+        local.setNombre(dto.getNombre());
+        local.setCiudad(dto.getCiudad());
 
-            return ResponseEntity.ok(localActualizado);
+        Local actualizado = localService.actualizar(id, local);
 
-        }catch (IllegalArgumentException e){
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.ok(actualizado);
     }
+
 
     // ELIMINAR LOCAL
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
-
-        if(localService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El local no existe.");
-        }
 
         localService.eliminar(id);
 

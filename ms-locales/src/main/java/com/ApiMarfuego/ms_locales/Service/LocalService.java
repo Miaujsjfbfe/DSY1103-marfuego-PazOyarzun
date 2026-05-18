@@ -17,10 +17,12 @@ public class LocalService {
         this.localRepository = localRepository;
     }
 
+
     //LISTAR
     public List<Local> listarLocales(){
         return localRepository.findAll();
     }
+
 
     //BUSCAR POR ID
     public Local buscarPorId(Long id){
@@ -28,14 +30,21 @@ public class LocalService {
                 .orElse(null);
     }
 
+
     //CREAR
     public Local crear(Local local){
         return localRepository.save(local);
     }
 
+
     //ACTUALIZAR
     public Local actualizar(Long id, Local datos){
         Local local = buscarPorId(id);
+
+        if(local == null) {
+            throw new RuntimeException(
+                    "El local no existe");
+        }
 
         local.setNombre(datos.getNombre());
         local.setCiudad(datos.getCiudad());
@@ -43,8 +52,17 @@ public class LocalService {
         return localRepository.save(local);
     }
 
+
     //ELIMINAR
     public void eliminar(Long id){
+
+        Local local = buscarPorId(id);
+
+        if(local == null) {
+            throw new RuntimeException(
+                    "El local no existe");
+        }
+
         localRepository.deleteById(id);
 
     }

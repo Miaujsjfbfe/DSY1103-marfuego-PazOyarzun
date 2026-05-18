@@ -33,13 +33,34 @@ public class MesaService {
 
     //GUARDAR MESA
     public Mesa guardar(Mesa mesa) {
-        return mesaRepository.save(mesa);
 
+        if(mesaRepository.existsByNumeroAndLocalId(mesa.getNumero(), mesa.getLocalId())){
+            throw new RuntimeException("Ya existe una mesa con ese número en el local");
+        }
+
+        return mesaRepository.save(mesa);
     }
 
     //ACTUALIZAR
     public Mesa actualizar(Long id, Mesa mesaActualizada){
         Mesa mesa = buscarPorId(id);
+
+        if(mesa == null){
+            throw new RuntimeException(
+                    "La mesa no existe.");
+        }
+
+        boolean mismoNumero = mesa.getNumero().equals(mesaActualizada.getNumero());
+        boolean mismoLocal = mesa.getLocalId().equals(mesaActualizada.getLocalId());
+
+
+        if(!(mismoNumero && mismoLocal) &&
+                mesaRepository.existsByNumeroAndLocalId(
+                        mesaActualizada.getNumero(),
+                        mesaActualizada.getLocalId())){
+            throw new RuntimeException(
+                    "Ya existe una mesa con ese número");
+        }
 
         mesa.setNumero(mesaActualizada.getNumero());
         mesa.setCapacidad(mesaActualizada.getCapacidad());
@@ -52,19 +73,24 @@ public class MesaService {
 
     //ELIMINAR
     public void eliminar(Long id) {
-        if(!mesaRepository.existsById(id)){
-            throw new RuntimeException("La mesa no existe");
+
+        Mesa mesa = buscarPorId(id);
+
+        if(mesa == null){
+            throw new RuntimeException(
+                    "La mesa no existe.");
         }
 
         mesaRepository.deleteById(id);
     }
+
 
     //OCUPAR MESA
     public Mesa ocuparMesa(Long id){
         Mesa mesa = buscarPorId(id);
 
         if (mesa == null) {
-            throw new RuntimeException("Mesa no encontrada");
+            throw new RuntimeException("La mesa no existe.");
         }
 
         mesa.setEstado(EstadoMesa.OCUPADA);
@@ -77,7 +103,7 @@ public class MesaService {
         Mesa mesa = buscarPorId(id);
 
         if (mesa == null) {
-            throw new RuntimeException("Mesa no encontrada");
+            throw new RuntimeException("La mesa no existe.");
         }
 
         mesa.setEstado(EstadoMesa.LIBRE);
@@ -85,19 +111,16 @@ public class MesaService {
         return mesaRepository.save(mesa);
     }
 
-    //PREGUNTAR ESTADO MESA
-    public boolean estaDisponible(Long id){
-        Mesa mesa = buscarPorId(id);
-
-        if (mesa == null) {
-            throw new RuntimeException("Mesa no encontrada");
-        }
-
-        return mesa.getEstado() == EstadoMesa.LIBRE;
-    }
-
     //BUSCAR MESAS POR LOCAL
     public List<Mesa> buscarPorLocal(Long idLocal){
-        return mesaRepository.findByLocalId(idLocal);
+
+        List<Mesa> mesas = mesaRepository.findByLocalId(idLocal);
+
+        if(mesas.isEmpty()){
+            throw new RuntimeException("No existen mesas para este local.");
+        }
+
+        return mesas;
     }
+
 }

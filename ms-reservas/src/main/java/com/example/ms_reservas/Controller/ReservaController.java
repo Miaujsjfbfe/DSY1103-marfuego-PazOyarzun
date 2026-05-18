@@ -23,6 +23,7 @@ public class ReservaController {
 
 
     // LISTAR LAS RESERVAS
+    @GetMapping
     public ResponseEntity<?> listarReservas(){
 
         List<Reserva> reservas = reservaService.listarReservas();

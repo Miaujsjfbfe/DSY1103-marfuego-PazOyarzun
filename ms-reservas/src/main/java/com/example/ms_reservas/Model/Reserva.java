@@ -26,3 +26,5 @@ public class Reserva {
     @Enumerated(EnumType.STRING)
     private EstadoReserva estado;
 }
+
+

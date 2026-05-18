@@ -1,7 +1,9 @@
 package com.example.ms_menu.Controller;
 
+import com.example.ms_menu.DTO.PlatoRequestDTO;
 import com.example.ms_menu.Model.Plato;
 import com.example.ms_menu.Service.PlatoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +28,15 @@ public class PlatoController {
         return ResponseEntity.ok(platos);
     }
 
+
     // BUSCAR PLATO POR ID
     @GetMapping("/{id}")
     public ResponseEntity<?>  buscarPorId(@PathVariable Long id){
+
         Plato plato = platoService.buscarPorId(id);
 
         if(plato == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Plato no existe.");
+            throw new RuntimeException("El plato no existe.");
         }
 
         return ResponseEntity.ok(plato);
@@ -41,37 +44,37 @@ public class PlatoController {
 
     // CREAR PLATO
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Plato plato){
-        try{
-            Plato plato1 = platoService.crearPlato(plato);
+    public ResponseEntity<?> guardar(@Valid @RequestBody PlatoRequestDTO dto) {
+        Plato plato = new Plato();
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(plato1);
+        plato.setNombre(dto.getNombre());
+        plato.setDescripcion(dto.getDescripcion());
+        plato.setPrecio(dto.getPrecio());
+        plato.setDisponible(dto.getDisponible());
+        plato.setLocalId(dto.getLocalId());
 
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        Plato platoGuardar = platoService.crearPlato(plato);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(platoGuardar);
     }
 
     // ACTUALIZAR PLATO
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Plato plato){
+    public ResponseEntity<?> actualizar(@PathVariable Long id,@Valid @RequestBody PlatoRequestDTO dto){
 
-        try{
-            if(platoService.buscarPorId(id) == null){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("El plato no existe.");
-            }
+        Plato plato = new Plato();
 
-            Plato newPlato = platoService.actualizar(id, plato);
+        plato.setNombre(dto.getNombre());
+        plato.setDescripcion(dto.getDescripcion());
+        plato.setPrecio(dto.getPrecio());
+        plato.setDisponible(dto.getDisponible());
+        plato.setLocalId(dto.getLocalId());
 
-            return ResponseEntity.ok(newPlato);
+        Plato platoActualizado = platoService.actualizar(id, plato);
 
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.ok(platoActualizado);
 
     }
 
@@ -80,12 +83,8 @@ public class PlatoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
 
-        if (platoService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El plato no existe.");
-        }
-
         platoService.eliminar(id);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -93,10 +92,6 @@ public class PlatoController {
     @PutMapping("/{id}/disponibilidad")
     public ResponseEntity<?> cambiarDisponibilidad(@PathVariable Long id,
                                                    @RequestParam Boolean disponible) {
-        if (platoService.buscarPorId(id) == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El plato no existe.");
-        }
 
         Plato plato = platoService.cambiarDisponibilidad(id, disponible);
 

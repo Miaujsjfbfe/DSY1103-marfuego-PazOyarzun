@@ -1,8 +1,10 @@
 package com.example.ms_pedidos.Controller;
 
+import com.example.ms_pedidos.DTO.PedidoRequestDTO;
 import com.example.ms_pedidos.Model.EstadoPedido;
 import com.example.ms_pedidos.Model.Pedido;
 import com.example.ms_pedidos.Service.PedidoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ public class PedidoController {
         this.pedidoService = pedidoService;
     }
 
+
+
     // LISTAR PEDIDOS
     @GetMapping
     public ResponseEntity<?> listarPedidos(){
@@ -28,6 +32,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+
     // BUSCAR PEDIDO POR ID
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
@@ -35,74 +40,58 @@ public class PedidoController {
         Pedido pedido = pedidoService.buscarPorId(id);
 
         if(pedido == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El pedido no existe.");
+            throw new RuntimeException("El pedido no existe.");
         }
 
         return ResponseEntity.ok(pedido);
     }
 
+
     // CREAR PEDIDO
     @PostMapping
-    public ResponseEntity<?> crearPedido(@RequestBody Pedido pedido){
+    public ResponseEntity<?> crearPedido(@Valid @RequestBody PedidoRequestDTO dto){
 
-        try{
+        Pedido pedido = new Pedido();
 
-            Pedido nuevoPedido = pedidoService.crearPedido(pedido);
+        pedido.setNombreCliente(dto.getNombreCliente());
+        pedido.setLocalId(dto.getLocalId());
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoPedido);
+        Pedido pedidoGuardar = pedidoService.crearPedido(pedido);
 
-        }catch (IllegalArgumentException e){
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(pedidoGuardar);
     }
+
 
     // ACTUALIZAR PEDIDO
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Pedido pedido){
-        try{
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @Valid @RequestBody PedidoRequestDTO dto){
 
-            if(pedidoService.buscarPorId(id) == null){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("El pedido no existe.");
-            }
+        Pedido pedido = new Pedido();
 
-            Pedido pedidoActualizado = pedidoService.actualizar(id, pedido);
+        pedido.setNombreCliente(dto.getNombreCliente());
+        pedido.setLocalId(dto.getLocalId());
 
-            return ResponseEntity.ok(pedidoActualizado);
+        Pedido pedidoActualizar = pedidoService.actualizar(id, pedido);
 
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.ok(pedidoActualizar);
     }
+
 
     // ELIMINAR PEDIDO
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
-
-        if(pedidoService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El pedido no existe.");
-        }
 
         pedidoService.eliminar(id);
 
         return ResponseEntity.noContent().build();
     }
 
+
     // CAMBIAR ESTADO DEL PEDIDO
     @PutMapping("/{id}/estado")
-    public ResponseEntity<?> cambiarEstado(@PathVariable Long id,
-                                           @RequestParam EstadoPedido estado){
-
-        if(pedidoService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El pedido no existe.");
-        }
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam EstadoPedido estado){
 
         Pedido pedido = pedidoService.cambiarEstado(id, estado);
 

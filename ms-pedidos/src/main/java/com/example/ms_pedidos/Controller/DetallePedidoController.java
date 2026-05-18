@@ -1,7 +1,9 @@
 package com.example.ms_pedidos.Controller;
 
+import com.example.ms_pedidos.DTO.DetallePedidoRequestDTO;
 import com.example.ms_pedidos.Model.DetallePedido;
 import com.example.ms_pedidos.Service.DetallePedidoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ public class DetallePedidoController {
         return ResponseEntity.ok(detalles);
     }
 
+
     // BUSCAR DETALLE POR ID
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
@@ -41,88 +44,38 @@ public class DetallePedidoController {
         return ResponseEntity.ok(detalle);
     }
 
-    // CREAR DETALLE
+
+    //AGREGAR PLATOS AL PEDIDO
     @PostMapping
-    public ResponseEntity<?> crearDetalle(@RequestBody DetallePedido detallePedido){
-        try{
+    public ResponseEntity<?> agregarPlatoPedido(@Valid @RequestBody
+                                                    DetallePedidoRequestDTO dto){
 
-            DetallePedido nuevoDetalle = detallePedidoService.crearDetalle(detallePedido);
+        DetallePedido detalle = detallePedidoService.agregarPlatoPedido(
+                dto.getPedidoId(), dto.getPlatoId(), dto.getCantidad());
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoDetalle);
 
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(detalle);
     }
 
-    // ACTUALIZAR DETALLE
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody DetallePedido detallePedido){
-
-        if(detallePedidoService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El detalle no existe.");
-        }
-
-        try{
-            DetallePedido detalleActualizado = detallePedidoService.actualizar(id, detallePedido);
-
-            return ResponseEntity.ok(detalleActualizado);
-
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
-    }
 
     // ELIMINAR DETALLE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
 
-        if(detallePedidoService.buscarPorId(id) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El detalle no existe.");
-        }
         detallePedidoService.eliminar(id);
 
         return ResponseEntity.noContent().build();
     }
 
+
     // LISTAR DETALLES POR PEDIDO
     @GetMapping("/pedido/{pedidoId}")
     public ResponseEntity<?> listarPorPedido(@PathVariable Long pedidoId){
 
-        try{
-            List<DetallePedido> detalles = detallePedidoService.listarPorPedido(pedidoId);
+        List<DetallePedido> detalles = detallePedidoService.listarPorPedido(pedidoId);
 
-            return ResponseEntity.ok(detalles);
-
-        }catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
-    }
-
-
-    //AGREGAR PLATOS AL PEDIDO
-    @PostMapping("/agregar")
-    public ResponseEntity<?> agregarPlatoPedido(@RequestBody DetallePedido detallePedido){
-        try{
-            DetallePedido detallePedido1 = detallePedidoService.agregarPlatoPedido(
-                    detallePedido.getPedido().getId(),
-                    detallePedido.getPlatoId(),
-                    detallePedido.getCantidad());
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(detallePedido1);
-
-        }catch (RuntimeException e){
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.ok(detalles);
     }
 
 
