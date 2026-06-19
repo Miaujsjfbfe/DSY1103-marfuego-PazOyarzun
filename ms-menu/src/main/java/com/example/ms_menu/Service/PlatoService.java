@@ -48,7 +48,10 @@ public class PlatoService {
     //BUSCAR PLATO POR ID
     public Plato buscarPorId( Long id){
         return platoRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(()->
+                        new RuntimeException(
+                                "El plato no existe."
+                        ));
     }
 
 
@@ -72,10 +75,6 @@ public class PlatoService {
 
         Plato plato1 = buscarPorId(id);
 
-        if (plato1 == null) {
-            throw new RuntimeException("El plato no existe.");
-        }
-
         //Consulto el local
         validarLocal(plato.getLocalId());
 
@@ -92,11 +91,7 @@ public class PlatoService {
     //ELIMINAR
     public void eliminar(Long id){
 
-        Plato plato = buscarPorId(id);
-
-        if(plato == null){
-            throw new RuntimeException("El plato no existe.");
-        }
+        buscarPorId(id);
 
         platoRepository.deleteById(id);
     }
@@ -106,10 +101,6 @@ public class PlatoService {
     public Plato cambiarDisponibilidad(Long id, Boolean disponible){
 
         Plato plato = buscarPorId(id);
-
-        if(plato == null){
-            throw new RuntimeException("El plato no existe.");
-        }
 
         plato.setDisponible(disponible);
 
