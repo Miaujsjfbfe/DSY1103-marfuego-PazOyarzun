@@ -27,7 +27,10 @@ public class MesaService {
     //BUSCAR POR ID
     public Mesa buscarPorId(Long id) {
         return mesaRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(()->
+                        new RuntimeException(
+                                "La mesa no existe."
+                        ));
 
     }
 

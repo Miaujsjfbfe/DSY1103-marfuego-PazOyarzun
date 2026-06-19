@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    //REGLAS DE NEGOCIO
+    //REGLAS DE NEGOCIO EXCEPCIONES LEVANTADAS POR MÍ
     @ExceptionHandler(RuntimeException.class)
 
     public ResponseEntity<?> manejarRuntime(RuntimeException e){
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
         error.put("mensaje", e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
 

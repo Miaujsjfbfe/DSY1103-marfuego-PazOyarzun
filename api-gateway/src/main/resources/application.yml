@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: locales-routes
+          uri: ${MS_LOCALES_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/locales/**
+            - Path=/api/v1/mesas/**
+
+        - id: menu-routes
+          uri: ${MS_MENU_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/platos/**
+
+        - id: pedidos-routes
+          uri: ${MS_PEDIDOS_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/v1/pedidos/**
+            - Path=/api/v1/detalles/**
+
+        - id: reservas-routes
+          uri: ${MS_RESERVAS_URI:http://localhost:8084}
+          predicates:
+            - Path=/api/v1/reservas/**

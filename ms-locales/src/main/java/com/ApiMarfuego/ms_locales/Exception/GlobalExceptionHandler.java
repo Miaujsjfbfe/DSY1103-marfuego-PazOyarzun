@@ -37,13 +37,9 @@ public class GlobalExceptionHandler {
 
         Map<String,Object> error = new HashMap<>();
 
-        //error.put("timestamp", LocalDateTime.now());
-
-        //error.put("status", HttpStatus.BAD_REQUEST.value());
-
         error.put("mensaje", e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
 
@@ -53,10 +49,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> manejarGeneral(Exception e){
 
         Map<String,Object> error = new HashMap<>();
-
-        error.put("timestamp", LocalDateTime.now());
-
-        error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
 
         error.put("mensaje", "Error interno del servidor");
 

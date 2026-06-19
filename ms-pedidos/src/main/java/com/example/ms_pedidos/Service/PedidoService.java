@@ -59,7 +59,11 @@ public class PedidoService {
     //BUSCAR PEDIDO POR ID
     public Pedido buscarPorId(Long id){
         return pedidoRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(()->{
+                    log.error("El pedido {} no existe.", id);
+                    return new RuntimeException(
+                            "El pedido no existe.");
+                });
     }
 
 
@@ -74,7 +78,7 @@ public class PedidoService {
         //Queda PENDIENTE automaticamente
         pedido.setEstado(EstadoPedido.PENDIENTE);
 
-        // Queda en total 0 hasta que se agreguen platos
+        //Queda en total 0 hasta que se agreguen platos
         pedido.setTotal(0.0);
 
         //Pongo la fecha del sistema
@@ -93,11 +97,6 @@ public class PedidoService {
 
         Pedido pedido = buscarPorId(id);
 
-        if (pedido == null){
-            log.error("El pedido {} no existe.", id);
-            throw new RuntimeException("El pedido no existe.");
-        }
-
         //valido que exista el local nuevo
         validarLocal(pedidoActualizado.getLocalId());
 
@@ -114,10 +113,6 @@ public class PedidoService {
 
         Pedido pedido = buscarPorId(id);
 
-        if (pedido == null){
-            throw new RuntimeException("El pedido no existe.");
-        }
-
         log.info("Eliminando pedido {}", id);
 
         pedidoRepository.deleteById(id);
@@ -129,9 +124,6 @@ public class PedidoService {
 
         Pedido pedido = buscarPorId(id);
 
-        if (pedido == null){
-            throw new RuntimeException("El pedido no existe.");
-        }
         log.info("Cambiando estado del pedido {} a {}", id, estado);
 
         pedido.setEstado(estado);

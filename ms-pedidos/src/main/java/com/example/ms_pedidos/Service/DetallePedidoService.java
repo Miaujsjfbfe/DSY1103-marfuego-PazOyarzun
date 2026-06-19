@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import java.util.List;
 
 @Service
@@ -42,7 +44,12 @@ public class DetallePedidoService {
     // BUSCAR DETALLE POR ID
     public DetallePedido buscarPorId(Long id){
         return detallePedidoRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> {
+                    log.error("El detalle pedido {} no existe.", id);
+
+                    return new RuntimeException(
+                            "El detalle pedido no existe.");
+                });
     }
 
     //AGREGAR PLATO AL PEDIDO - Aqui se CREA el detalle
@@ -56,23 +63,25 @@ public class DetallePedidoService {
         // BUSCAR PEDIDO
         Pedido pedido = pedidoService.buscarPorId(pedidoId);
 
-        if(pedido == null){
-            log.error("El pedido {} no existe.", pedidoId);
-            throw new RuntimeException("El pedido no existe.");
-        }
 
         // CONSULTAR PLATO EN MS-MENU
-        PlatoDTO plato = webClient.get()
-                .uri("/api/v1/platos/" + platoId)
-                .retrieve()
-                .bodyToMono(PlatoDTO.class)
-                .block();
+        PlatoDTO plato;
 
-        // VALIDAR SI EXISTE
-        if(plato == null){
+        try {
+            plato = webClient.get()
+                    .uri("/api/v1/platos/" + platoId)
+                    .retrieve()
+                    .bodyToMono(PlatoDTO.class)
+                    .block();
+
+        } catch (WebClientResponseException.NotFound e){
+
             log.error("El plato {} no existe.", platoId);
-            throw new RuntimeException("El plato no existe.");
+
+            throw new RuntimeException(
+                    "El plato no existe.");
         }
+
 
         // VALIDAR QUE EL PLATO PERTENEZCA AL LOCAL
         if(!plato.getLocalId().equals(pedido.getLocalId())){
@@ -120,13 +129,6 @@ public class DetallePedidoService {
 
         DetallePedido detalle = buscarPorId(id);
 
-        if(detalle == null){
-
-            log.error("El detalle {} no existe.", id);
-
-            throw new RuntimeException("El detalle no existe.");
-        }
-
         //Elimino el precio del detalle al total del pedido
         Pedido pedido = detalle.getPedido();
         pedido.setTotal(pedido.getTotal() - detalle.getSubtotal());
@@ -140,16 +142,12 @@ public class DetallePedidoService {
     }
 
     // LISTAR DETALLES POR PEDIDO
-    public List<DetallePedido> listarPorPedido(Long pedidoId){
+    public List<DetallePedido> listarPorPedido(Long pedidoId) {
 
-        Pedido pedido = pedidoService.buscarPorId(pedidoId);
-
-        if(pedido == null){
-            throw new RuntimeException("El pedido no existe");
-
-        }
+        pedidoService.buscarPorId(pedidoId); //Validar existencia de pedido
 
         return detallePedidoRepository.findByPedidoId(pedidoId);
+
     }
 
 }
