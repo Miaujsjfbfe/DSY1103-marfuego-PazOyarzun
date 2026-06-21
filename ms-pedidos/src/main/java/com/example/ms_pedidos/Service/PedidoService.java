@@ -6,9 +6,11 @@ import com.example.ms_pedidos.Model.Pedido;
 import com.example.ms_pedidos.Repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,30 +27,25 @@ public class PedidoService {
     private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
 
 
-    //Web client para LOCALES
-    private final WebClient webClient = WebClient.create("http://localhost:8081");
+    @Value("${ms.locales.url}")
+    private String localesUrl;
 
     // VALIDAR LOCAL
     private void validarLocal(Long localId){
 
-        LocalDTO local =
-                webClient.get()
-                        .uri("/api/v1/locales/"
-                                + localId)
-                        .retrieve()
-                        .bodyToMono(LocalDTO.class)
-                        .block();
+        LocalDTO local;
 
-        if(local == null){
-
-            log.error("El local {} no existe.", localId);
-
-            throw new RuntimeException(
-                    "El local no existe.");
+        try{
+            local = WebClient.create(localesUrl)
+                    .get()
+                    .uri("/api/v1/locales/" + localId)
+                    .retrieve()
+                    .bodyToMono(LocalDTO.class)
+                    .block();
+        } catch (WebClientResponseException.NotFound e){
+            throw new RuntimeException("El local no existe.");
         }
     }
-
-
 
     //LISTAR PEDIDOS
     public List<Pedido> listarPedidos(){
@@ -111,7 +108,7 @@ public class PedidoService {
     //ELIMINAR PEDIDO
     public void eliminar(Long id){
 
-        Pedido pedido = buscarPorId(id);
+        buscarPorId(id);
 
         log.info("Eliminando pedido {}", id);
 

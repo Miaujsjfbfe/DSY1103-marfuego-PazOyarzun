@@ -1,0 +1,48 @@
+services:
+  ms-locales:
+    build: ./ms-locales
+    container_name: ms-locales
+    ports:
+      - "8081:8081"
+
+  ms-menu:
+    build: ./ms-menu
+    container_name: ms-menu
+    ports:
+      - "8082:8082"
+    environment:
+      MS_LOCALES_URI: http://ms-locales:8081
+
+  ms-pedidos:
+    build: ./ms-pedidos
+    container_name: ms-pedidos
+    ports:
+      - "8083:8083"
+    environment:
+      MS_LOCALES_URI: http://ms-locales:8081
+      MS_MENU_URI: http://ms-menu:8082
+
+  ms-reservas:
+    build: ./ms-reservas
+    container_name: ms-reservas
+    ports:
+      - "8084:8084"
+    environment:
+      MS_LOCALES_URI: http://ms-locales:8081
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+
+    environment:
+      MS_LOCALES_URI: http://ms-locales:8081
+      MS_MENU_URI: http://ms-menu:8082
+      MS_PEDIDOS_URI: http://ms-pedidos:8083
+      MS_RESERVAS_URI: http://ms-reservas:8084
+    depends_on:
+      - ms-locales
+      - ms-menu
+      - ms-pedidos
+      - ms-reservas

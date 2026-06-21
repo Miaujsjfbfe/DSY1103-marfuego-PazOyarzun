@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -37,25 +38,24 @@ public class ReservaService {
 
 
     //WEB CLIENT MS-LOCALES
-     private final WebClient webClient = WebClient.create("http://localhost:8081");
-
+    @Value("${ms.locales.url}")
+    private String localesUrl;
 
     //METODO PARA VERIFICAR MESA
     private MesaDTO validarMesa(Long mesaId){
 
         MesaDTO mesa;
         try{
-            mesa = webClient.get()
+            mesa = WebClient.create(localesUrl)
+                    .get()
                     .uri("/api/v1/mesas/" + mesaId)
                     .retrieve()
                     .bodyToMono(MesaDTO.class)
                     .block();
             return mesa;
-
         }catch(WebClientResponseException.NotFound e){
 
             throw new RuntimeException("La mesa no existe.");
-
         }
     }
 
@@ -89,7 +89,8 @@ public class ReservaService {
 
 
         //Cambiar estado de mesa LIBRE a OCUPADA
-        webClient.put()
+        WebClient.create(localesUrl)
+                .put()
                 .uri("/api/v1/mesas/"
                         + reserva.getMesaId()
                         + "/ocupar")
@@ -118,12 +119,12 @@ public class ReservaService {
         }
 
         //Validar local
-        if(!mesa.getLocalId().equals(reserva.getLocalId())){
+        if(!mesa.getLocalId().equals(datos.getLocalId())){
             throw new RuntimeException("La mesa no pertenece al local.");
         }
 
         //Validar capacidad
-        if(reserva.getCantidadPersonas()> mesa.getCapacidad()){
+        if(datos.getCantidadPersonas()> mesa.getCapacidad()){
             throw new RuntimeException("La mesa no tiene la capacidad de personas necesaria.");
         }
 
@@ -131,7 +132,8 @@ public class ReservaService {
         if(!reserva.getMesaId().equals(datos.getMesaId())){
 
             // Liberar mesa antigua
-            webClient.put()
+            WebClient.create(localesUrl)
+                    .put()
                     .uri("/api/v1/mesas/"
                             + reserva.getMesaId()
                             + "/liberar")
@@ -140,7 +142,8 @@ public class ReservaService {
                     .block();
 
             // Ocupar nueva mesa
-            webClient.put()
+            WebClient.create(localesUrl)
+                    .put()
                     .uri("/api/v1/mesas/"
                             + datos.getMesaId()
                             + "/ocupar")
@@ -164,7 +167,8 @@ public class ReservaService {
         Reserva reserva = buscarPorId(id);
 
         //Cambio el estado de la mesa de OCUPADA a LIBRE
-        webClient.put()
+        WebClient.create(localesUrl)
+                .put()
                 .uri("/api/v1/mesas/"
                         + reserva.getMesaId()
                         + "/liberar")

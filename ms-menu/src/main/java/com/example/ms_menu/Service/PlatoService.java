@@ -5,6 +5,8 @@ import com.example.ms_menu.Repository.PlatoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.ms_menu.DTO.LocalDTO;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -17,25 +19,24 @@ public class PlatoService {
         this.platoRepository = platoRepository;
     }
 
+    @Value("${ms.locales.url}")
+    private String localesUrl;
 
-
-    private final WebClient webClient = WebClient.create("http://localhost:8081");
-
-    //METODO DTO
+    //METODO VALIDAR LOCAL
     private void validarLocal(Long localId){
-        LocalDTO local =
-                webClient.get()
-                        .uri("/api/v1/locales/"
-                                + localId)
-                        .retrieve()
-                        .bodyToMono(LocalDTO.class)
-                        .block();
 
-        if(local == null) {
-            throw new RuntimeException(
-                    "El local no existe.");
+        LocalDTO local;
+        try {
+            local = WebClient.create(localesUrl)
+                    .get()
+                    .uri("/api/v1/locales/" + localId)
+                    .retrieve()
+                    .bodyToMono(LocalDTO.class)
+                    .block();
+        }catch(WebClientResponseException.NotFound e){
+
+            throw new RuntimeException("El local no existe.");
         }
-
     }
 
 

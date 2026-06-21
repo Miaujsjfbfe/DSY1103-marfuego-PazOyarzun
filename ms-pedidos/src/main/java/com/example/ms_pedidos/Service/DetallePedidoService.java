@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -30,10 +31,9 @@ public class DetallePedidoService {
 
     private static final Logger log = LoggerFactory.getLogger(DetallePedidoService.class);
 
-    //WEBCLIENT PARA CONECTAR CON MS-MENU
-    private final WebClient webClient =
-            WebClient.create("http://localhost:8082");
 
+    @Value("${ms.menu.url}")
+    private String menuUrl;
 
     // LISTAR TODOS LOS DETALLES
     public List<DetallePedido> listarDetalles(){
@@ -53,31 +53,24 @@ public class DetallePedidoService {
     }
 
     //AGREGAR PLATO AL PEDIDO - Aqui se CREA el detalle
-    public DetallePedido agregarPlatoPedido(Long pedidoId,
-                                            Long platoId,
-                                            Integer cantidad){
-
+    public DetallePedido agregarPlatoPedido(Long pedidoId, Long platoId, Integer cantidad){
 
         log.info("Agregando plato {} al pedido {}", platoId, pedidoId);
 
         // BUSCAR PEDIDO
         Pedido pedido = pedidoService.buscarPorId(pedidoId);
 
-
-        // CONSULTAR PLATO EN MS-MENU
-        PlatoDTO plato;
+        PlatoDTO plato; // CONSULTAR PLATO EN MS-MENU
 
         try {
-            plato = webClient.get()
+            plato = WebClient.create(menuUrl)
+                    .get()
                     .uri("/api/v1/platos/" + platoId)
                     .retrieve()
                     .bodyToMono(PlatoDTO.class)
                     .block();
-
         } catch (WebClientResponseException.NotFound e){
-
             log.error("El plato {} no existe.", platoId);
-
             throw new RuntimeException(
                     "El plato no existe.");
         }

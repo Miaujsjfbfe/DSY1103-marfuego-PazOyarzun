@@ -10,21 +10,29 @@ spring:
         - id: locales-routes
           uri: ${MS_LOCALES_URI:http://localhost:8081}
           predicates:
-            - Path=/api/v1/locales/**
-            - Path=/api/v1/mesas/**
+            - Path=/api/v1/locales/**,/api/v1/locales
+
+        - id: mesas-routes
+          uri: ${MS_LOCALES_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/mesas/**,/api/v1/mesas
 
         - id: menu-routes
           uri: ${MS_MENU_URI:http://localhost:8082}
           predicates:
-            - Path=/api/v1/platos/**
+            - Path=/api/v1/platos/**,/api/v1/platos
 
         - id: pedidos-routes
           uri: ${MS_PEDIDOS_URI:http://localhost:8083}
           predicates:
-            - Path=/api/v1/pedidos/**
-            - Path=/api/v1/detalles/**
+            - Path=/api/v1/pedidos/**,/api/v1/pedidos
+
+        - id: detalles-routes
+          uri: ${MS_PEDIDOS_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/v1/detalles/**,/api/v1/detalles
 
         - id: reservas-routes
           uri: ${MS_RESERVAS_URI:http://localhost:8084}
           predicates:
-            - Path=/api/v1/reservas/**
+            - Path=/api/v1/reservas/**,/api/v1/reservas
