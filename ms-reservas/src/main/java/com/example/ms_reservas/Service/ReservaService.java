@@ -4,12 +4,14 @@ import com.example.ms_reservas.DTO.MesaDTO;
 import com.example.ms_reservas.Model.EstadoReserva;
 import com.example.ms_reservas.Model.Reserva;
 import com.example.ms_reservas.Repository.ReservaRepository;
+import org.slf4j.*;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,15 +23,31 @@ public class ReservaService {
         this.reservaRepository = reservaRepository;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(ReservaService.class);
+
+    //WEB CLIENT MS-LOCALES
+    @Value("${ms.locales.url}")
+    private String localesUrl;
+
+    // Metodo separado para facilitar Tests
+    protected WebClient getWebClient() {
+        return WebClient.create(localesUrl);
+    }
+
+
+
     // LISTAR RESERVAS
     public List<Reserva> listarReservas(){
         return reservaRepository.findAll();
     }
 
+
     // BUSCAR RESERVA POR ID
     public Reserva buscarPorId(Long id){
         return reservaRepository.findById(id)
                 .orElseThrow(() -> {
+
+                    log.error("La reserva {} no existe.", id);
 
                     return new RuntimeException(
                             "La reserva no existe.");
@@ -37,16 +55,12 @@ public class ReservaService {
     }
 
 
-    //WEB CLIENT MS-LOCALES
-    @Value("${ms.locales.url}")
-    private String localesUrl;
-
     //METODO PARA VERIFICAR MESA
     private MesaDTO validarMesa(Long mesaId){
 
         MesaDTO mesa;
         try{
-            mesa = WebClient.create(localesUrl)
+            mesa = getWebClient()
                     .get()
                     .uri("/api/v1/mesas/" + mesaId)
                     .retrieve()
@@ -55,14 +69,17 @@ public class ReservaService {
             return mesa;
         }catch(WebClientResponseException.NotFound e){
 
+            log.error("La mesa {} no existe.", mesaId);
+
             throw new RuntimeException("La mesa no existe.");
         }
     }
 
 
-
     // CREAR RESERVA
     public Reserva crearReserva(Reserva reserva){
+
+        log.info("Creando reserva para cliente {}", reserva.getNombreCliente());
 
         MesaDTO mesa = validarMesa(reserva.getMesaId());
 
@@ -71,25 +88,32 @@ public class ReservaService {
             throw new RuntimeException("La mesa no esta disponible.");
         }
 
-
         //Validar local
         if(!mesa.getLocalId().equals(reserva.getLocalId())){
             throw new RuntimeException("La mesa no pertenece al local.");
         }
 
-        //Validar capacidad
-        if(reserva.getCantidadPersonas()> mesa.getCapacidad()){
+        //Validar la cantidad de personas requridas
+        if(reserva.getCantidadPersonas() <= 0){
+            throw new RuntimeException(
+                    "La cantidad de personas debe ser mayor a cero.");
+        }
+
+        //Validar capacidad necesaria
+        if(reserva.getCantidadPersonas()> mesa.getCapacidad()){ 
             throw new RuntimeException("La mesa no tiene la capacidad de personas necesaria.");
         }
 
+        if(reserva.getFechaReserva().isBefore(LocalDateTime.now().minusMinutes(1))){
+            throw new RuntimeException("La fecha no es válida.");
+        }
 
         //Settear estado inicial
-        reserva.setEstado(
-                EstadoReserva.PENDIENTE);
+        reserva.setEstado(EstadoReserva.PENDIENTE);
 
 
         //Cambiar estado de mesa LIBRE a OCUPADA
-        WebClient.create(localesUrl)
+        getWebClient()
                 .put()
                 .uri("/api/v1/mesas/"
                         + reserva.getMesaId()
@@ -98,8 +122,11 @@ public class ReservaService {
                 .bodyToMono(Void.class)
                 .block();
 
+        Reserva reservaGuardada = reservaRepository.save(reserva);
 
-        return reservaRepository.save(reserva);
+        log.info("Reserva creada correctamente con ID {}", reservaGuardada.getId());
+
+        return reservaGuardada;
     }
 
 
@@ -110,7 +137,16 @@ public class ReservaService {
 
         MesaDTO mesa = validarMesa(datos.getMesaId());
 
-        //VALIDAR DATOS DE MESA
+        //VALIDAR DATOS
+
+        log.info("Actualizando reserva {}", id);
+
+        //Validar el estado de la reserva
+        if(reserva.getEstado() == EstadoReserva.CANCELADA ||
+                reserva.getEstado() == EstadoReserva.FINALIZADA){
+            throw new RuntimeException(
+                    "No se puede modificar una reserva cancelada o finalizada.");
+        }
 
         //Valida el estado de la mesa
         if(!mesa.getEstado().equals("LIBRE")
@@ -123,16 +159,27 @@ public class ReservaService {
             throw new RuntimeException("La mesa no pertenece al local.");
         }
 
-        //Validar capacidad
+        //Validar la cantidad de personas requridas
+        if(datos.getCantidadPersonas() <= 0){
+            throw new RuntimeException(
+                    "La cantidad de personas debe ser mayor a cero.");
+        }
+
+        //Validar capacidad necesaria
         if(datos.getCantidadPersonas()> mesa.getCapacidad()){
             throw new RuntimeException("La mesa no tiene la capacidad de personas necesaria.");
+        }
+
+        if(datos.getFechaReserva().isBefore(LocalDateTime.now().minusMinutes(1))){
+            throw new RuntimeException(
+                    "La fecha de reserva no puede ser pasada.");
         }
 
         // Validar un cambio de mesa
         if(!reserva.getMesaId().equals(datos.getMesaId())){
 
             // Liberar mesa antigua
-            WebClient.create(localesUrl)
+            getWebClient()
                     .put()
                     .uri("/api/v1/mesas/"
                             + reserva.getMesaId()
@@ -142,7 +189,7 @@ public class ReservaService {
                     .block();
 
             // Ocupar nueva mesa
-            WebClient.create(localesUrl)
+            getWebClient()
                     .put()
                     .uri("/api/v1/mesas/"
                             + datos.getMesaId()
@@ -161,13 +208,14 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
+
     // ELIMINAR RESERVA
     public void eliminar(Long id){
 
         Reserva reserva = buscarPorId(id);
 
         //Cambio el estado de la mesa de OCUPADA a LIBRE
-        WebClient.create(localesUrl)
+        getWebClient()
                 .put()
                 .uri("/api/v1/mesas/"
                         + reserva.getMesaId()
@@ -176,8 +224,11 @@ public class ReservaService {
                 .bodyToMono(Void.class)
                 .block();
 
+        log.info("Reserva {} eliminada.", id);
+
         reservaRepository.deleteById(id);
     }
+
 
     // CAMBIAR ESTADO RESERVA
     public Reserva cambiarEstado(Long id, EstadoReserva estado){
@@ -186,14 +237,19 @@ public class ReservaService {
 
         reserva.setEstado(estado);
 
+        log.info("Cambiando estado de reserva {} a {}", id, estado);
+
         return reservaRepository.save(reserva);
     }
 
+
     // LISTAR RESERVAS POR LOCAL
     public List<Reserva> listarPorLocal(Long localId){
+
         return reservaRepository.findByLocalId(localId);
 
     }
+
 
     // LISTAR RESERVAS POR ESTADO
     public List<Reserva> listarPorEstado(EstadoReserva estado){

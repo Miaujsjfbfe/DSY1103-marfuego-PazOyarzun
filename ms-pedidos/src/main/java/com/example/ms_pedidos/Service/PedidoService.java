@@ -26,9 +26,16 @@ public class PedidoService {
 
     private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
 
-
+    //Obtiene URL desde application properties
     @Value("${ms.locales.url}")
     private String localesUrl;
+
+    // Metodo separado para facilitar Tests
+    protected WebClient getWebClient() {
+        return WebClient.create(localesUrl);
+    }
+
+
 
     // VALIDAR LOCAL
     private void validarLocal(Long localId){
@@ -36,16 +43,20 @@ public class PedidoService {
         LocalDTO local;
 
         try{
-            local = WebClient.create(localesUrl)
+            local = getWebClient()
                     .get()
                     .uri("/api/v1/locales/" + localId)
                     .retrieve()
                     .bodyToMono(LocalDTO.class)
                     .block();
         } catch (WebClientResponseException.NotFound e){
+
+            log.error("El local {} no existe.", localId);
+
             throw new RuntimeException("El local no existe.");
         }
     }
+
 
     //LISTAR PEDIDOS
     public List<Pedido> listarPedidos(){
@@ -94,9 +105,6 @@ public class PedidoService {
 
         Pedido pedido = buscarPorId(id);
 
-        //valido que exista el local nuevo
-        validarLocal(pedidoActualizado.getLocalId());
-
         pedido.setNombreCliente(pedidoActualizado.getNombreCliente());
 
         log.info("Pedido {} actualizado correctamente.", pedido.getId());
@@ -113,8 +121,8 @@ public class PedidoService {
         log.info("Eliminando pedido {}", id);
 
         pedidoRepository.deleteById(id);
-
     }
+
 
     //CAMBIAR ESTADO DEL PEDIDO
     public Pedido cambiarEstado(Long id, EstadoPedido estado){
@@ -124,6 +132,7 @@ public class PedidoService {
         log.info("Cambiando estado del pedido {} a {}", id, estado);
 
         pedido.setEstado(estado);
+
         return pedidoRepository.save(pedido);
     }
 }

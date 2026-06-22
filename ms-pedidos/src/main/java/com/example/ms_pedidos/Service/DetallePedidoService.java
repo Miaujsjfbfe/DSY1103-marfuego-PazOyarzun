@@ -2,6 +2,7 @@ package com.example.ms_pedidos.Service;
 
 import com.example.ms_pedidos.DTO.PlatoDTO;
 import com.example.ms_pedidos.Model.DetallePedido;
+import com.example.ms_pedidos.Model.EstadoPedido;
 import com.example.ms_pedidos.Model.Pedido;
 import com.example.ms_pedidos.Repository.DetallePedidoRepository;
 import com.example.ms_pedidos.Repository.PedidoRepository;
@@ -31,9 +32,17 @@ public class DetallePedidoService {
 
     private static final Logger log = LoggerFactory.getLogger(DetallePedidoService.class);
 
-
+    //Obtiene URL desde application properties
     @Value("${ms.menu.url}")
     private String menuUrl;
+
+    // Metodo separado para facilitar Tests
+    protected WebClient getWebClient() {
+        return WebClient.create(menuUrl);
+    }
+
+
+
 
     // LISTAR TODOS LOS DETALLES
     public List<DetallePedido> listarDetalles(){
@@ -52,6 +61,7 @@ public class DetallePedidoService {
                 });
     }
 
+
     //AGREGAR PLATO AL PEDIDO - Aqui se CREA el detalle
     public DetallePedido agregarPlatoPedido(Long pedidoId, Long platoId, Integer cantidad){
 
@@ -60,10 +70,16 @@ public class DetallePedidoService {
         // BUSCAR PEDIDO
         Pedido pedido = pedidoService.buscarPorId(pedidoId);
 
+        // VALIDAR QUE EL PEDIDO ESTÉ ABIERTO
+        if(pedido.getEstado() == EstadoPedido.CANCELADO){
+            throw new RuntimeException(
+                    "No se pueden agregar platos a un pedido cancelado.");
+        }
+
         PlatoDTO plato; // CONSULTAR PLATO EN MS-MENU
 
         try {
-            plato = WebClient.create(menuUrl)
+            plato = getWebClient()
                     .get()
                     .uri("/api/v1/platos/" + platoId)
                     .retrieve()
@@ -87,6 +103,7 @@ public class DetallePedidoService {
             log.error("El plato {} no está disponible.", plato.getNombre());
             throw new RuntimeException("El plato está agotado.");
         }
+
 
         // CREAR DETALLE
         DetallePedido detalle = new DetallePedido();
@@ -133,6 +150,7 @@ public class DetallePedidoService {
         detallePedidoRepository.deleteById(id);
 
     }
+
 
     // LISTAR DETALLES POR PEDIDO
     public List<DetallePedido> listarPorPedido(Long pedidoId) {
