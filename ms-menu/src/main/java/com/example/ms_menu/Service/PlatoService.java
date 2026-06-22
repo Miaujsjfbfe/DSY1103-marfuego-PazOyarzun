@@ -2,6 +2,7 @@ package com.example.ms_menu.Service;
 
 import com.example.ms_menu.Model.Plato;
 import com.example.ms_menu.Repository.PlatoRepository;
+import org.slf4j.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.ms_menu.DTO.LocalDTO;
@@ -19,21 +20,32 @@ public class PlatoService {
         this.platoRepository = platoRepository;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(PlatoService.class);
+
+    //Obtiene URL desde application properties
     @Value("${ms.locales.url}")
     private String localesUrl;
+
+
+    // Metodo separado para facilitar pruebas TEST
+    protected WebClient getWebClient() {
+        return WebClient.create(localesUrl);
+    }
 
     //METODO VALIDAR LOCAL
     private void validarLocal(Long localId){
 
         LocalDTO local;
         try {
-            local = WebClient.create(localesUrl)
+            local = getWebClient()
                     .get()
                     .uri("/api/v1/locales/" + localId)
                     .retrieve()
                     .bodyToMono(LocalDTO.class)
                     .block();
         }catch(WebClientResponseException.NotFound e){
+
+            log.error("El local {} no existe.", localId);
 
             throw new RuntimeException("El local no existe.");
         }
@@ -49,10 +61,12 @@ public class PlatoService {
     //BUSCAR PLATO POR ID
     public Plato buscarPorId( Long id){
         return platoRepository.findById(id)
-                .orElseThrow(()->
-                        new RuntimeException(
-                                "El plato no existe."
-                        ));
+                .orElseThrow(()-> {
+
+                    log.error("El plato {} no existe.", id);
+
+                    return new RuntimeException("El plato no existe.");
+                });
     }
 
 
@@ -66,6 +80,8 @@ public class PlatoService {
         if(plato.getDisponible() == null){
             plato.setDisponible(true);
         }
+
+        log.info("Creando plato {} para local {}", plato.getNombre(), plato.getLocalId());
 
         return platoRepository.save(plato);
     }
@@ -85,6 +101,7 @@ public class PlatoService {
         plato1.setDisponible(plato.getDisponible());
         plato1.setLocalId(plato.getLocalId());
 
+        log.info("Actualizando plato {}", id);
         return platoRepository.save(plato1);
     }
 
@@ -93,6 +110,8 @@ public class PlatoService {
     public void eliminar(Long id){
 
         buscarPorId(id);
+
+        log.info("Eliminando plato {}", id);
 
         platoRepository.deleteById(id);
     }
@@ -104,6 +123,8 @@ public class PlatoService {
         Plato plato = buscarPorId(id);
 
         plato.setDisponible(disponible);
+
+        log.info("Cambiando disponibilidad del plato {} a {}", id, disponible);
 
         return platoRepository.save(plato);
     }
